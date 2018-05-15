@@ -1,9 +1,9 @@
 #!/usr/bin/env racket
 #lang racket/base
 
-
-(define empty-square -0)            
+            
 (define side-length 8)
+(define empty-square 0)
 (define initial-depth 0)
 (define count 0) ; debug counter
 
@@ -13,6 +13,10 @@
 ; xxxxxxx xxxxxxx kkkkkkk xxxxxxx xxxxxxx
 ; (-2,-1) xxxxxxx xxxxxxx xxxxxxx ( 2,-1)
 ; xxxxxxx (-1,-2) xxxxxxx ( 1,-2) xxxxxxx
+
+
+; note that complete tours are obligated to move to the corner when it is a legal move, otherwise it is not possible to enter and exit the corner
+
 
 ; one needlessly complicated way to think about these moves: permutations of (1, 2) combined with multipermutations of (+, -)
 (define knight-moves ; the hard way
@@ -86,34 +90,31 @@
 ; we're backtrack searching for a tree that goes say (side * side) deep so that we moved to every part of the board
 
 (define knight-tour
-  (lambda (board side-length current-x current-y moves depth acc)
-    (print-board board); debug
+  (lambda (board side-length current-x current-y moves depth)
+    ;(print-board board); debug
     ;(set! count (+ count 1))
-    ;(display count) (newline)
-    (let ([updated-x (if (null? moves) (+ 1 side-length) (+ current-x (car (car moves))))]; put it out of range if out of moves
-          [updated-y (if (null? moves)  (+ 1 side-length) (+ current-y (car (cdr (car moves)))))])
+    ;(display count) (display " : ") (display depth) (newline)
+    (let ([updated-x (if (null? moves) -1 (+ current-x (car (car moves))))]; put it out of range if out of moves
+          [updated-y (if (null? moves) -1 (+ current-y (car (cdr (car moves)))))])
       (cond
         ((null? moves) #f); out of moves, go back
-        ((= depth (sub1 (* side-length side-length))) (print-board board) #f); we've got a winner; this will be encountered after placing the last move and recursing
-        ; check if the next move is valid
-        (else
-         (if (check-move board updated-x updated-y side-length)
-             (knight-tour (add-move board updated-x updated-y depth); if our move is valid, try it. or do nothing knight-tour should always return false
+        ((= depth (* side-length side-length)))) (print-board board) #f); we've got a winner, reached recursion limit, go back
+        ; check if our current position is valid, then we can keep going
+        ((check-move board current-x current-y side-length)
+            (knight-tour (add-move board current-x current-y depth)
                           side-length
                           updated-x
                           updated-y
                           all-moves; our moves are all available again
-                          (add1 depth)
-                          acc)
-             (void))
-         ; try the rest of our moves
-         (knight-tour board
-                      side-length
-                      current-x
-                      current-y
-                      (cdr moves) ; we used up the last move
-                      depth  ; the depth is the same
-                      acc))))))
+                          (add1 depth))
+                ; try the rest of our moves
+                (knight-tour board
+                             side-length
+                             current-x
+                             current-y
+                             (cdr moves) ; we used up the last move
+                             depth  ; the depth is the same
+                      ))))))
 
 (define print-board
   (lambda (board)
@@ -173,6 +174,6 @@
 ;(check-move (add-move (empty-board side-length) 2 2 55) 2 2 side-length); -> #f
 ;(knight-moves initial-depth)
 
-(knight-tour (empty-board side-length) side-length 0 0 (knight-moves initial-depth) (add1 initial-depth) '())
+(knight-tour (empty-board side-length) side-length 0 0 (knight-moves initial-depth) (add1 initial-depth))
 
 

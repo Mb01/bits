@@ -1,7 +1,7 @@
 #!/usr/bin/env racket
 #lang racket/base
 
-            
+
 (define side-length 8)
 (define empty-square 0)
 (define initial-depth 0)
@@ -98,22 +98,23 @@
           [updated-y (if (null? moves) -1 (+ current-y (car (cdr (car moves)))))])
       (cond
         ((null? moves) #f); out of moves, go back
-        ((= depth (* side-length side-length)))) (print-board board) #f); we've got a winner, reached recursion limit, go back
+        ((= depth (* side-length side-length)) (print-board board) #f); we've got a winner, reached recursion limit, go back
+        
         ; check if our current position is valid, then we can keep going
         ((check-move board current-x current-y side-length)
-            (knight-tour (add-move board current-x current-y depth)
-                          side-length
-                          updated-x
-                          updated-y
-                          all-moves; our moves are all available again
-                          (add1 depth))
-                ; try the rest of our moves
-                (knight-tour board
-                             side-length
-                             current-x
-                             current-y
-                             (cdr moves) ; we used up the last move
-                             depth  ; the depth is the same
+         (knight-tour (add-move board current-x current-y depth)
+                      side-length
+                      updated-x
+                      updated-y
+                      all-moves; our moves are all available again
+                      (add1 depth))
+         ; try the rest of our moves
+         (knight-tour board
+                      side-length
+                      current-x
+                      current-y
+                      (cdr moves) ; we used up the last move
+                      depth  ; the depth is the same
                       ))))))
 
 (define print-board
@@ -175,5 +176,3 @@
 ;(knight-moves initial-depth)
 
 (knight-tour (empty-board side-length) side-length 0 0 (knight-moves initial-depth) (add1 initial-depth))
-
-

@@ -15,9 +15,7 @@
 ; xxxxxxx (-1,-2) xxxxxxx ( 1,-2) xxxxxxx
 
 
-; note that complete tours are obligated to move to the corner when it is a legal move, otherwise it is not possible to enter and exit the corner
-
-
+; the following is a silly way to get a list of knight moves
 ; one needlessly complicated way to think about these moves: permutations of (1, 2) combined with multipermutations of (+, -)
 (define knight-moves ; the hard way
   (lambda (x)

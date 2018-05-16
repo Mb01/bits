@@ -4,6 +4,7 @@
 # in a more testable manner this time
 
 from itertools import starmap
+from random import shuffle
 
 # we'll use fixed dimensions
 dim = 8
@@ -41,7 +42,15 @@ almost_solved_board =  [[1 ,12 , 9  ,6  ,3 ,14 ,17 ,20],
 # all the moves a knight can make
 # (delta-x, delta-y)
 def all_moves(): 
-    return [(1,2),(1,-2),(-1,2),(-1,-2),(2,1),(2,-1),(-2,1),(-2,-1)]
+    moves = [(1,2),(1,-2),(-1,2),(-1,-2),(2,1),(2,-1),(-2,1),(-2,-1)]
+    shuffle(moves)
+    return moves
+
+def rotate(li):
+    if li:
+        tmp = li.pop(0)
+        li.append(tmp)
+
 
 # answers: can we move to a corner?
 def corner_available(x,y, board):

@@ -1,3 +1,4 @@
+;;;;;;;;;;;;;;;;;;;; The following problem is from Project Euler.
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;;;;;;;;;;;;;;;;;; PROBLEM AS STATED
 
@@ -7,6 +8,8 @@
 
 ;Find the sum of all products whose multiplicand/multiplier/product identity can be written as a 1 through 9 pandigital.
 ;HINT: Some products can be obtained in more than one way so be sure to only include it once in your sum.
+
+;;;;;;;;;;;;;;;;;;;; https://projecteuler.net/problem=32
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
@@ -20,9 +23,7 @@
 ; whenever the first partition has more digits than the last number
 ; it can't be part of a solution
 
-; importantly, no partitions moving the middle or last partition further right has a new solution
-
-; 
+; importantly, no partitions moving the middle or last partition further right has a new solution because the numbers on the left only get larger
 
 
 #lang racket
@@ -123,7 +124,6 @@
     (inner one two empty-acc)
     ))
 
-(partition-into-three (range 1 6))
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;;;;;;;;;;;;;;;;;;end_partitioning
 
@@ -145,4 +145,4 @@
    passing-partitions)))
 
 
-;(apply + (set->list (list->set products-to-sum)))
+(apply + (set->list (list->set products-to-sum)))

@@ -1,8 +1,8 @@
-#!/usr/bin/env racket
+#! /usr/bin/env racket
 #lang racket/base
 
 
-(define side-length 8)
+(define side-length 7)
 (define empty-square 0)
 (define initial-depth 0)
 (define count 0) ; debug counter
@@ -95,8 +95,9 @@
     (let ([updated-x (if (null? moves) -1 (+ current-x (car (car moves))))]; put it out of range if out of moves
           [updated-y (if (null? moves) -1 (+ current-y (car (cdr (car moves)))))])
       (cond
-        ((null? moves) #f); out of moves, go back
-        ((= depth (* side-length side-length)) (print-board board) #f); we've got a winner, reached recursion limit, go back
+        ((null? moves) 'finished); out of moves, go back
+        ((and (= depth (* side-length side-length)) (check-move board current-x current-y side-length))  (print-board (add-move board current-x current-y depth)) #f); we've got a winner, reached recursion limit, go back
+        ; TODO, fix order to remove redundant steps
         
         ; check if our current position is valid, then we can keep going
         ((check-move board current-x current-y side-length)

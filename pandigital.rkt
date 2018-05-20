@@ -1,3 +1,5 @@
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;; PROBLEM AS STATED
 
 ;We shall say that an n-digit number is pandigital if it makes use of all the digits 1 to n exactly once; for example, the 5-digit number, 15234, is 1 through 5 pandigital.
 
@@ -5,6 +7,23 @@
 
 ;Find the sum of all products whose multiplicand/multiplier/product identity can be written as a 1 through 9 pandigital.
 ;HINT: Some products can be obtained in more than one way so be sure to only include it once in your sum.
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+; we can see that
+;(length (permutations problem-range initial-depth (length problem-range))); -> 986410
+
+; we need to reduce the number of partitions for each permutation
+
+; We can skip partitions that don't have a solution.
+
+; whenever the first partition has more digits than the last number
+; it can't be part of a solution
+
+; importantly, no partitions moving the middle or last partition further right has a new solution
+
+; 
+
 
 #lang racket
 
@@ -13,7 +32,7 @@
 (define one 1)
 (define two 2)
 (define initial-depth 0)
-(define problem-range (range 1 10));
+(define problem-range (range 1 10)); we need to set 5 back to 10!!!!!!!!!
 (define problem-range-length (length problem-range))
 
 (define (list->number li)
@@ -62,6 +81,7 @@
    (permutations problem-range initial-depth problem-range-length)))
 
 
+
 ; ok the brute force way to this is like this
 ; obviously there is some limitation on multiplication being larger than the largest number (987654321) possible
 ;;;;;;;;;;;;;;;;;;;partitioning
@@ -95,6 +115,7 @@
               (let (
                     [add-acc (cons (make-partitions pw1 pw2) acc-li)])
                 (cond
+                  ((> pw1 (- (length base-li) pw2 1)) add-acc)
                   ((not (= (add1 pw1) pw2))              (inner (add1 pw1) pw2  add-acc))
                   ((not (= (add1 pw2) (length base-li))) (inner one (add1 pw2) add-acc))
                   (else add-acc))))])
@@ -102,17 +123,11 @@
     (inner one two empty-acc)
     ))
 
+(partition-into-three (range 1 6))
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;;;;;;;;;;;;;;;;;;end_partitioning
 
  
-
-;(length (permutations problem-range initial-depth (length problem-range))); -> 986410
-
-; this means partitions will probably be to large to calculate with brute force
-
-
-
 ; get a list of all partitioned permutations
 (define lists-of-partitions (map partition-into-three permutes-to-evaluate))
 (define all-partitions (append* (car lists-of-partitions) (cdr lists-of-partitions)))
@@ -129,4 +144,5 @@
    (lambda (x) (car (cdr (cdr x))))
    passing-partitions)))
 
- (apply + (set->list (list->set products-to-sum)))
+
+;(apply + (set->list (list->set products-to-sum)))

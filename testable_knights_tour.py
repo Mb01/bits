@@ -27,7 +27,6 @@ no_corners_board = [[1, 0, 0, 0, 0, 0, 0, 2],
          [0, 0, 0, 0, 0, 0, 0, 0],
          [3, 0, 0, 0, 0, 0, 0, 4]]
 
-
 # all but the last three moves are solved
 # we are on move 62 and at position (0,3)
 # this should allow us to find the answer in a reasonable amount of time
@@ -77,36 +76,32 @@ assert(corner_available(5,1, almost_solved_board))
 
 
 def tour_optimized(x, y, n, board):
-    global COUNT
-    #COUNT += 1
-    #if COUNT % 100000 == 0:
-    #    print_board(board)
- 
-    # stop if move not available
+    # valid-move?
     if x < 0 or x >= dim or y < 0 or y >= dim or board[x][y]:
         return
     
-    # try moving there
+    # add-move
     board[x][y] = n
 
     # 64 moves is a winner
     if n == 64:
         print_board(board)
     
-    # try to move to a corner if possible
+    # if corner is available, go there
     ca = corner_available(x,y,board)
     if ca:
         mx, my = ca
         tour_optimized(mx, my, n+1, board)
     
-    # (making this next part an else statement means that tours both starting/ending in corners are skipped) 
+    # making this next part an else statement means that 
+    # tours both starting/ending in corners are skipped
     
     # or try all the moves
     else:
         for mx,my in all_moves():
             tour_optimized(x+mx, y+my,n+1, board)
 
-    # always reset the square
+    # un-add-move
     board[x][y] = 0
 
 

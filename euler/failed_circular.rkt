@@ -12,7 +12,6 @@
 
 (define upto 1000000)
 
-; special version
 (define (prime? n)
   (define (prime?-helper n i)
     (cond

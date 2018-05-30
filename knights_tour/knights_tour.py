@@ -18,7 +18,8 @@ board = [[0, 0, 0, 0, 0, 0, 0, 0],
          [0, 0, 0, 0, 0, 0, 0, 0],
          [0, 0, 0, 0, 0, 0, 0, 0]]
 
-no_corners_board = [[1, 0, 0, 0, 0, 0, 0, 2],
+# test board
+no_corners_board = [[1, 0, 0, 0, 0, 0, 0, 2], 
          [0, 0, 0, 0, 0, 0, 0, 0],
          [0, 0, 0, 0, 0, 0, 0, 0],
          [0, 0, 0, 0, 0, 0, 0, 0],
@@ -67,8 +68,14 @@ def corner_available(x,y, board):
         if res:
             return res
 
+COUNT = 0
 # recursively searches for complete tours -> print to stdout 
 def tour_optimized(x, y, n, board):
+    global COUNT
+    COUNT += 1
+    if COUNT % 1000000 == 0:
+        print COUNT/1000000, "million iterations"
+        #print_board(board)
     # valid-move?
     if x < 0 or x >= dim or y < 0 or y >= dim or board[x][y]:
         return
@@ -127,8 +134,11 @@ assert(corner_available(2,6, no_corners_board) == None)
 assert(corner_available(5,1, almost_solved_board))
 
 
-print "FROM ALMOST SOLVED"
+print "PROVING IT CAN SOLVE AN ALMOST FINISHED BOARD"
 tour_optimized(3, 0, 62, almost_solved_board)
 print "=END TEST=\n" * 3
+
+
+print "please wait... a long time perhaps"
 
 tour_optimized(0,0,1,board)

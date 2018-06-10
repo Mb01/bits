@@ -4,12 +4,20 @@
 ; functions which have may well be used across multiple solutions
 
 (provide prime?)
+
+; deprecated
 (provide number->list)
 (provide list->number)
+
+(provide integer->list)
+(provide list->integer)
+
 (provide qsort)
 (provide next-permutation)
 (provide prev-permutation)
 (provide factor)
+
+(provide two-combs)
 
 (define (prime? n)
   (define (inner n i); = has-a-factor?
@@ -57,8 +65,20 @@
 ;(display 12654654) (display (factor 12654654)) (newline)
 ;(display 77777773) (display (factor 77777773)) (newline)
 
+
+(define (integer->list n)
+  (number->list n '()))
+
+(define (list->integer li)
+  (list->number li))
+
+
+
+
+;; external use depracated
 ; (number->list 654 '()) -> '(6 5 4) ; Ineed to refactor this really
 ; no need to expose acc
+; TODO make it return correct value for exactly 0
 (define (number->list n acc)
   (let ([rem  (remainder n 10)])
     (if (= n 0)
@@ -67,6 +87,7 @@
 
 
 
+;; to be depracated
 (define (list->number li)
   (letrec ([inner
             (lambda (li string-acc)
@@ -116,60 +137,95 @@
     (inner li pos empty)))
 
 
+
 ; lexicograph/find next larger permutation of number
 ; integer -> integer
 (define (next-permutation n)
-  (letrec (
-           [original-li
-            (reverse (number->list n empty))]
+  (call/cc
+   (lambda (return)
+     (letrec (
+              [original-li
+               (reverse (integer->list n))]
+              
+              [piv
+               (lambda (li pos)
+                 (cond
+                   ((not (next-exists? li)) (return #f))
+                   ((< (next li) (car li)) pos)
+                   (else (piv (cdr li) (add1 pos)))))]
+              
+              [pivot-pos (piv original-li 1)] ; initial position is from 1
+              
+              [pivot-val (list-ref original-li pivot-pos)]
+              
+              [successor; 'inversion' before pivot proves this exists
+               (lambda (li pos)
+                 (if (> (car li) pivot-val)
+                     pos
+                     (successor (cdr li) (add1 pos))))]
+              [successor-pos (successor original-li 0)]
+              )
+       (list->number
+        (reverse
+         (reverse-before
+          (swapped original-li successor-pos pivot-pos) pivot-pos)))))))
 
-           [piv
-            (lambda (li pos)
-              (cond
-                ((not (next-exists? li)) 'none)
-                ((< (next li) (car li)) pos)
-                (else (piv (cdr li) (add1 pos)))))]
 
-           [pivot-pos (piv original-li 1)]
-           [pivot-val (list-ref original-li pivot-pos)]
+; 0123 ->  9876 (must keep 0 otherwise big trouble with leading 9s 0s)
+; e.g. 908 -> 91 -> 8
+; probably needs to store as string until permuted
+; **** FIXME ****
+;(define (inverse-digits n)
+;  (list->integer
+;   (map
+;    (lambda (x) (- 9 x))
+;    (integer->list n))))
 
-           [successor; 'inversion' before pivot proves this exists
-            (lambda (li pos)
-              (if (> (car li) pivot-val)
-                  pos
-                  (successor (cdr li) (add1 pos))))]
-           [successor-pos (successor original-li 0)]
-           )
-    (list->number
-     (reverse
-      (reverse-before
-       (swapped original-li successor-pos pivot-pos) pivot-pos)))))
-
-; prev permutation the ugly copy paste way
+; invert the digits
 (define (prev-permutation n)
+  (call/cc
+   (lambda (return)
+     (letrec (
+              [original-li
+               (reverse (integer->list n))]
+              
+              [piv
+               (lambda (li pos)
+                 (cond
+                   ((not (next-exists? li)) (return #f))
+                   ((> (next li) (car li)) pos)
+                   (else (piv (cdr li) (add1 pos)))))]
+              
+              [pivot-pos (piv original-li 1)] ; initial position is from 1
+              
+              [pivot-val (list-ref original-li pivot-pos)]
+              
+              [successor; 'inversion' before pivot proves this exists
+               (lambda (li pos)
+                 (if (< (car li) pivot-val)
+                     pos
+                     (successor (cdr li) (add1 pos))))]
+              
+              [successor-pos (successor original-li 0)]
+              )
+       (list->number
+        (reverse
+         (reverse-before
+          (swapped original-li successor-pos pivot-pos) pivot-pos)))))))
+
+; **** DO NOT USE  ***
+; why write general solution
+(define (two-combs li)
   (letrec (
-           [original-li
-            (reverse (number->list n empty))]
-
-           [piv
-            (lambda (li pos)
-              (cond
-                ((not (next-exists? li)) 'none)
-                ((> (next li) (car li)) pos)
-                (else (piv (cdr li) (add1 pos)))))]
-
-           [pivot-pos (piv original-li 1)]
-           [pivot-val (list-ref original-li pivot-pos)]
-
-           [successor; 'inversion' before pivot proves this exists
-            (lambda (li pos)
-              (if (< (car li) pivot-val)
-                  pos
-                  (successor (cdr li) (add1 pos))))]
-           [successor-pos (successor original-li 0)]
-           )
-    (list->number
-     (reverse
-      (reverse-before
-       (swapped original-li successor-pos pivot-pos) pivot-pos)))
-    ))
+           [inner
+           (lambda (x li)
+             (if (null? li)
+                 (list)
+                 (cons
+                  (list x (car li))
+                  (inner x (cdr li)))))])
+    (if (null? li)
+        (list)
+        (append
+         (inner (car li) (cdr li))
+         (two-combs (cdr li))))))

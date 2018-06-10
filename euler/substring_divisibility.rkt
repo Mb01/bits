@@ -32,7 +32,7 @@ Find the sum of all 0 to 9 pandigital numbers with this property.
       (take3 (cons 0 li)); this makes me happy
       (take li 3)))
 
-(define (divisible li x)
+(define (divisible? li x)
   (= (modulo (list->integer li) x) 0))
 
 (define (has-property? li)
@@ -42,7 +42,7 @@ Find the sum of all 0 to 9 pandigital numbers with this property.
         (lambda (li div-list)
           (cond
             ((null? div-list) #t)
-            ((not (divisible (take3 li) (car div-list))) #f)
+            ((not (divisible? (take3 li) (car div-list))) #f)
             (else (inner (drop1 li) (cdr div-list)))))])
     (inner (drop1 li) div-list)))
 
@@ -62,7 +62,7 @@ Find the sum of all 0 to 9 pandigital numbers with this property.
 
 (define start2 (set '1 2 3 4 5 6 7 8 9 0))
 
-(define (n-choose-3 remaining-set)
+(define (n-choose-3 remaining-list)
   (letrec
       (
        [inner
@@ -70,14 +70,34 @@ Find the sum of all 0 to 9 pandigital numbers with this property.
           (cond
             ((= 3 (length acc)) (list acc))
             ((null? li) '())
-            ; we can either choose or not
+            ; choose or not choose first number
             (else
              (append
               (inner (cdr li) (cons (car li) acc))
               (inner (cdr li) acc)))))])
-    (inner (qsort (set->list remaining-set)) '())))
+    (inner (qsort remaining-list) '())))
 
-(define (build remaining-set div-list)
-  
+(define (all-3-permutes remaining-set)
+  (letrec
+      ([do-one
+        (lambda (perm)
+          (let ([next (prev-permutation (list->integer perm))])
+          (if next
+              (cons (integer->list next) (do-one (integer->list next)))
+              (list))))])
+    (apply append (map do-one (n-choose-3 (set->list remaining-set))))))
 
-  
+;(define (build remaining-set div-list acc)
+
+; well we could go down that route but I have a better idea
+; let's descend into the tree with pruning
+
+(define (slice li from to)
+  (letrec ([inner
+            (lambda (count acc)
+              if (= count to)
+
+(define (build remaining acc) ; the ugly way
+  (cond 
+    (or
+     (and (= length acc 4) (not  

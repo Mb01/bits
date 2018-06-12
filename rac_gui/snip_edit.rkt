@@ -1,15 +1,23 @@
 #lang racket/gui
 
+; a text pasting pallete tool
+
+; synopsis
+; inherit from editor-canvas% 
+; to overide methods for custom callbacks (define a class)
+; instantiate it
+; instantiate text object / paster object
+; assign it to respective canvases
+; also set up a menu
+
 (require racket/gui/base)
 
-; main "frame"
+; parent frame
 (define frame (new frame% [label "Snip Edit"]
                       [width 800]
                       [height 500]))
 
-(define msg (new message% [parent frame]
-                          [label "No events so far..."]))
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
 ; use inheritance to override base class key handlers for canvases
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
@@ -20,8 +28,8 @@
     (define/override (on-char event)
 
       ; debug line to examine keys
-      ;(eprintf "got ~v\n" (send event get-key-code))
-      
+      (eprintf "got ~v\n" (send event get-shift-down))
+        
       )
     ; Call the superclass init, passing on all init args
     (super-new)))
@@ -33,8 +41,8 @@
     (define/override (on-char event)
 
       ; debug line to examine keys
-      ;(eprintf "got ~v\n" (send event get-key-code))
-
+      (printf "~a\n" (send event get-key-code))
+      (send (get-editor) copy)
       )
     ; Call the superclass init, passing on all init args
     (super-new)))
@@ -49,15 +57,14 @@
        [parent frame]))
 
 (define pasteboard-canvas
-  (new bot-editor-canvas%
+  (new bot-pasteboard-canvas%
        [parent frame]))
 
-
 (define text (new text%))
-
 (define pasteboard (new pasteboard%))
+
 (send editor-canvas set-editor text)
-(send paste-canvas set-editor pasteboard)
+(send pasteboard-canvas set-editor pasteboard)
 
 (define menu-bar (new menu-bar% [parent frame]))
 (define menu-edit (new menu% [label "Edit"] [parent menu-bar]))
@@ -69,6 +76,8 @@
 (send text set-max-undo-history 100)
 
 (send frame show #t)
+
+(send editor-canvas get-editor)
 
 
 

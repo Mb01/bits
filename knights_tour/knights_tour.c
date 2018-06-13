@@ -3,21 +3,14 @@
 #include <limits.h>
 /* Find a knight's tour around a chessboard, visit every square exactly once */
 /* a complete tour returns to the same square, but this is not what we are looking for today */
+
 /* This is a rehash of a version I wrote 4/5 years ago */
 
+/* surprisingly, the particular move order finds more solutions in less time than others I have tried */
 
 /* simple printer funtion for board aka an array */
-void prar(int ** ar, int n){
-    int i,j;
-    for(i = 0; i < n; i++){
-        for(j = 0; j < n; j++){
-            if(j != 0) putchar(' ');
-            if(ar[i][j] < 10) putchar(' ');
-            printf("%d", ar[i][j]);
-            if(j == n - 1) putchar('\n');
-        }
-    }
-}
+void prar(int ** ar, int n);
+
 
 unsigned long long CALL_COUNT = 0;
 
@@ -77,6 +70,22 @@ void solve(int n){
     /* free some stuff ... */
 }
 
+/* simple printer funtion for board aka an array */
+void prar(int ** ar, int n){
+    int i,j;
+    for(i = 0; i < n; i++){
+        for(j = 0; j < n; j++){
+            if(j != 0) putchar(' ');
+            if(ar[i][j] < 10) putchar(' ');
+            printf("%d", ar[i][j]);
+            if(j == n - 1) putchar('\n');
+        }
+    }
+}
+
+
+
+
 
 
 /* driver */
@@ -88,4 +97,6 @@ int main(int argc, char** argv){
     }
     solve(n);
 }
+
+
 

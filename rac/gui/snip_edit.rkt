@@ -1,6 +1,9 @@
 #lang racket/gui
 
+(require framework)
+
 ; a text pasting pallete tool
+; this is merely a toy
 
 ; synopsis
 ; inherit from editor-canvas% 
@@ -17,54 +20,82 @@
                       [width 800]
                       [height 500]))
 
-
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; use inheritance to override base class key handlers for canvases
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (define top-editor-canvas%
-  (class
-    editor-canvas% ; base class
+  (class editor-canvas%
+    (super-new)
     ; override method handling keyboard events
-    (define/override (on-char event)
-
+    #;(define/override (on-char event)
       ; debug line to examine keys
       (eprintf "got ~v\n" (send event get-shift-down))
         
       )
     ; Call the superclass init, passing on all init args
-    (super-new)))
+    ))
 
 (define bot-pasteboard-canvas%
-  (class
-    editor-canvas% ; base class
-    ; override method handling keyboard events
-    (define/override (on-char event)
-
-      ; debug line to examine keys
-      (printf "~a\n" (send event get-key-code))
-      (send (get-editor) copy)
-      )
-    ; Call the superclass init, passing on all init args
-    (super-new)))
-
+  (class editor-canvas%
+    (init o-editor)
+    (super-new)
+    (define other-editor o-editor)
+    (define/public (copy-to-other-editor)
+      (let ([this-editor (send this get-editor)])
+        (send this-editor copy)
+        (send other-editor paste)
+        (displayln "copy-to-other-editor")))
+    
+    #;(define/public (on-char event); override method handling keyboard events
+      (let ([key-code (send event get-key-code)]
+            [this-editor (send this get-editor)])
+        (printf "~a\n" key-code); debug line to examine keys
+        (send this-editor copy)
+        (send other-editor paste)))
+    ))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-; setup canvas with editor/pasteboard
+; setup editor canvas with editor
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (define editor-canvas
   (new top-editor-canvas%
        [parent frame]))
 
+(define text (new text%))
+(send editor-canvas set-editor text)
+
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; setup pasteboard canvas with editor 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+
 (define pasteboard-canvas
   (new bot-pasteboard-canvas%
-       [parent frame]))
+       [parent frame]
+       [o-editor text]
+       ))
 
-(define text (new text%))
+
 (define pasteboard (new pasteboard%))
-
-(send editor-canvas set-editor text)
 (send pasteboard-canvas set-editor pasteboard)
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; keymap for pasteboard
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(define pasteboard-keymap (new keymap%))
+
+(add-text-keymap-functions pasteboard-keymap)
+
+;;(send keymap map-function "c:x" "cut-clipboard")
+;;(send keymap map-function "c:c" "copy-clipboard")
+(send pasteboard-keymap map-function "v" "clipboard-copy")
+
+;;(send keymap map-function "middlebutton" "paste-x-selection")
+(send pasteboard set-keymap pasteboard-keymap)
 
 (define menu-bar (new menu-bar% [parent frame]))
 (define menu-edit (new menu% [label "Edit"] [parent menu-bar]))
@@ -76,8 +107,6 @@
 (send text set-max-undo-history 100)
 
 (send frame show #t)
-
-(send editor-canvas get-editor)
 
 
 

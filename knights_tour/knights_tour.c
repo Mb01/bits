@@ -11,7 +11,6 @@
 /* simple printer funtion for board aka an array */
 void prar(int ** ar, int n);
 
-
 unsigned long long CALL_COUNT = 0;
 
 /* use backtracking to find solutions */

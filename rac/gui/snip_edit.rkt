@@ -8,7 +8,7 @@
 ;; show frame
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-
+(require "utils.rkt")
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; frames and canvases
@@ -99,11 +99,11 @@
                         "ectoe"
                         editor-copy-to-other-editor
                         "c:/")
+
 (add-function-to-keymap editor-keymap
                          "ecltoe"
                          editor-copy-line-other-editor
                          "left")
-
 
 (add-function-to-keymap pasteboard-keymap
                         "pbctoe"

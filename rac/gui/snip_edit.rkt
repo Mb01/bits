@@ -9,42 +9,32 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 
+(require "top-editor-canvas.rkt")
+(require "bot-editor-canvas.rkt")
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-; parent frame
+; frames and canvases
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (define frame (new frame% [label "Snip Edit"]
-                      [width 800]
-                      [height 500]))
+                      [width 1000]
+                      [height 800]))
 
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-; use inheritance to create custom functions
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; left in derived classes to allow flexibility later
+; for now, I've left out the complexity of associating
+; canvas dependent behavior (i.e. when a text% instance (buffer) is in the top
+; window it behaves differently than when in bottom window
 
 (define top-editor-canvas%
   (class editor-canvas%
-    (init o-editor)
-    (super-new)
-    (define other-editor o-editor)
-
-    (define/public (copy-to-other-editor)
-      (let ([this-editor (send this get-editor)])
-        (send this-editor copy)
-        (send other-editor paste)
-        ))))
+    (super-new)))
 
 (define bot-pasteboard-canvas%
   (class editor-canvas%
-    (init o-editor)
-    (super-new)
-    (define other-editor o-editor)
-    (define/public (copy-to-other-editor)
-      (let ([this-editor (send this get-editor)])
-        (send this-editor copy)
-        (send other-editor paste)))))
+    (super-new)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-; create editors for the two canvases
+; create editors
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (define text (new text%))
@@ -56,9 +46,7 @@
 
 (define editor-canvas
   (new top-editor-canvas%
-       [parent frame]
-       [o-editor pasteboard]
-       ))
+       [parent frame]))
 
 (send editor-canvas set-editor text)
 
@@ -68,8 +56,7 @@
 
 (define pasteboard-canvas
   (new bot-pasteboard-canvas%
-       [parent frame]
-       [o-editor text]))
+       [parent frame]))
 
 (send pasteboard-canvas set-editor pasteboard)
 
@@ -79,7 +66,8 @@
 
 ; expose editor copy-to-other-editor
 (define (editor-copy-to-other-editor)
-  (send editor-canvas copy-to-other-editor))
+  (send text copy)
+  (send pasteboard paste))
 
 ; expose pasteboard copy-to-other-editor
 (define (pasteboard-copy-to-other-editor)
@@ -91,17 +79,16 @@
 
 ; add common functions
 (add-text-keymap-functions pasteboard-keymap)
-(add-text-keymap-functions editor-keymap)
+;(add-text-keymap-functions editor-keymap)
 
 ;; add and map a function wrapped to take 2 variables and throw them away for now
 (define (add-function-to-keymap keymap name func key)
   (send keymap add-function name (lambda (dummy1 dummy2) (func)))
   (send keymap  map-function key name) )
 
-;; map two keys to the function
-(add-function-to-keymap pasteboard-keymap "pbctoe" pasteboard-copy-to-other-editor "v")
-(add-function-to-keymap editor-keymap "ectoe" editor-copy-to-other-editor "c")
-
+;; map keys to functions
+(add-function-to-keymap pasteboard-keymap "pbctoe" pasteboard-copy-to-other-editor ".")
+(add-function-to-keymap editor-keymap "ectoe" editor-copy-to-other-editor ".")
 
 ; attach/give keymap to editor
 (send text set-keymap editor-keymap)

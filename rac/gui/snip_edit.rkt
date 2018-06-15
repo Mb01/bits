@@ -9,8 +9,6 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 
-(require "top-editor-canvas.rkt")
-(require "bot-editor-canvas.rkt")
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; frames and canvases
@@ -64,14 +62,24 @@
 ; keymap for pasteboard
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-; expose editor copy-to-other-editor
+;;text editor focus operations
+(define (editor-select-line)
+  (send text move-position 'left #f 'line)
+  (send text move-position 'right #t 'line))
+
 (define (editor-copy-to-other-editor)
   (send text copy)
   (send pasteboard paste))
 
-; expose pasteboard copy-to-other-editor
+(define (editor-copy-line-other-editor)
+  (editor-select-line)
+  (editor-copy-to-other-editor))
+
+
+;;pasteboard editor focus operations
 (define (pasteboard-copy-to-other-editor)
-  (send pasteboard-canvas copy-to-other-editor))
+  (send pasteboard copy)
+  (send text paste))
 
 ; create a keymap for both pasteboard and editor
 (define pasteboard-keymap (new keymap%))
@@ -79,16 +87,29 @@
 
 ; add common functions
 (add-text-keymap-functions pasteboard-keymap)
-;(add-text-keymap-functions editor-keymap)
+(add-text-keymap-functions editor-keymap)
 
 ;; add and map a function wrapped to take 2 variables and throw them away for now
 (define (add-function-to-keymap keymap name func key)
   (send keymap add-function name (lambda (dummy1 dummy2) (func)))
-  (send keymap  map-function key name) )
+  (send keymap map-function key name) )
 
 ;; map keys to functions
-(add-function-to-keymap pasteboard-keymap "pbctoe" pasteboard-copy-to-other-editor ".")
-(add-function-to-keymap editor-keymap "ectoe" editor-copy-to-other-editor ".")
+(add-function-to-keymap editor-keymap
+                        "ectoe"
+                        editor-copy-to-other-editor
+                        "c:/")
+(add-function-to-keymap editor-keymap
+                         "ecltoe"
+                         editor-copy-line-other-editor
+                         "left")
+
+
+(add-function-to-keymap pasteboard-keymap
+                        "pbctoe"
+                        pasteboard-copy-to-other-editor
+                        "c:/")
+
 
 ; attach/give keymap to editor
 (send text set-keymap editor-keymap)

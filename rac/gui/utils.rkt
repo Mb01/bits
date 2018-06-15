@@ -19,3 +19,15 @@
   (generator ()
     (sequence-for-each
      (lambda (x) (yield x)) (in-cycle li))))
+
+; replace full width numbers with appropriate half-width numbers
+(define (zenkaku-numbers-to-hankaku a-string)
+  (define (zenkaku-map a-char)
+    (define zenkaku-hash (hash #\０ #\0  #\１ #\1   #\２ #\2   #\３ #\3   #\４ #\4   #\５ #\5 #\６ #\6 #\７ #\7 #\８ #\8 #\９ #\9))
+    (if (hash-has-key? zenkaku-hash a-char)
+        (hash-ref zenkaku-hash a-char)
+        a-char))
+  (list->string (map zenkaku-map (string->list a-string))))
+
+
+

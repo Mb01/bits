@@ -6,6 +6,8 @@
 
 (provide get-clipboard-contents)
 (provide set-clipboard-contents)
+(provide zenkaku-numbers-to-hankaku)
+
 
 ;; we're throwing away our chance to use the timestamp of an event
 ;; hopefully the clipboard doesn't change from keypress to actual retrieval
@@ -15,6 +17,7 @@
 (define (set-clipboard-contents a-string)
   (send the-clipboard set-clipboard-string a-string (current-milliseconds)))
 
+; this might be useful for cycling through different snips
 (define (make-ring-generator li)
   (generator ()
     (sequence-for-each

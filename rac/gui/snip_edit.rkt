@@ -63,17 +63,32 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 ;;text editor focus operations
+(define (editor-paste)
+  (send text paste))
+
+(define (editor-copy)
+  (send text copy))
+
 (define (editor-select-line)
   (send text move-position 'left #f 'line)
   (send text move-position 'right #t 'line))
 
 (define (editor-copy-to-other-editor)
-  (send text copy)
+  (editor-copy)
   (send pasteboard paste))
 
 (define (editor-copy-line-other-editor)
   (editor-select-line)
   (editor-copy-to-other-editor))
+
+(define (editor-cut-line)
+    (editor-select-line)
+    (send text cut))
+
+(define (editor-zen-to-han-line)
+  (editor-cut-line)
+  (set-clipboard-contents (zenkaku-numbers-to-hankaku (get-clipboard-contents)))
+  (editor-paste))
 
 
 ;;pasteboard editor focus operations
@@ -109,7 +124,6 @@
                         "pbctoe"
                         pasteboard-copy-to-other-editor
                         "c:/")
-
 
 ; attach/give keymap to editor
 (send text set-keymap editor-keymap)

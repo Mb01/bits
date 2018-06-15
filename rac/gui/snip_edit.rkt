@@ -125,6 +125,12 @@
                         pasteboard-copy-to-other-editor
                         "c:/")
 
+(add-function-to-keymap editor-keymap
+                        "ezthl"
+                        editor-zen-to-han-line
+                        "c:n")
+
+
 ; attach/give keymap to editor
 (send text set-keymap editor-keymap)
 

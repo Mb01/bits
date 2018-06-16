@@ -66,16 +66,16 @@
   (letrec (
            [left #\/] [right #\\] [node #\0]
            [connector-levels
-            (lambda (level apart spaced o-apart)
+            (lambda (level apart spaced)
             (if (> apart 0)
                 (cons  (pairs left right (expt 2 level) apart spaced)
-                       (connector-levels level (- apart 2) (+ spaced 2) o-apart))
-                (node-level (sub1 level) (add1 (* 2 o-apart)) (add1 (* 2 o-apart)))))]
+                       (connector-levels level (- apart 2) (+ spaced 2)))
+                (node-level (sub1 level) spaced spaced)))]
            [node-level
             (lambda (level apart spaced)
               (if (>= level 0)
                   (cons (pairs node node (expt 2 level) apart spaced)
-                        (connector-levels level (- apart 2) (+ spaced 2) apart))
+                        (connector-levels level (- apart 2) (+ spaced 2)))
                   (list (list node))))])
            (node-level (- level 2) bottom-spacing bottom-spacing)))
 

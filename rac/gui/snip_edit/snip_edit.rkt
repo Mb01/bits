@@ -62,7 +62,9 @@
 ; keymap for pasteboard
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;text editor focus operations
+
 (define (editor-paste)
   (send text paste))
 
@@ -81,6 +83,9 @@
   (editor-select-line)
   (editor-copy-to-other-editor))
 
+(define (editor-copy-from-other-editor)
+  (pasteboard-copy-to-other-editor))
+
 (define (editor-cut-line)
     (editor-select-line)
     (send text cut))
@@ -90,8 +95,9 @@
   (set-clipboard-contents (zenkaku-numbers-to-hankaku (get-clipboard-contents)))
   (editor-paste))
 
-
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;pasteboard editor focus operations
+
 (define (pasteboard-copy-to-other-editor)
   (send pasteboard copy)
   (send text paste))
@@ -119,17 +125,20 @@
                          "ecltoe"
                          editor-copy-line-other-editor
                          "left")
+(add-function-to-keymap editor-keymap
+                        "ecfoe"
+                        editor-copy-from-other-editor
+                        "right")
 
 (add-function-to-keymap pasteboard-keymap
                         "pbctoe"
                         pasteboard-copy-to-other-editor
-                        "c:/")
+                        "left")
 
 (add-function-to-keymap editor-keymap
                         "ezthl"
                         editor-zen-to-han-line
                         "c:n")
-
 
 ; attach/give keymap to editor
 (send text set-keymap editor-keymap)

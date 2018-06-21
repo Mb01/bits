@@ -27,6 +27,7 @@
     (look-table amount)))
 
 ; unique sets of coins
+; we need to build up from the bottom else brute force ; oh well
 (define coin-problem-partition ; gimme coins descending
   (memoize
    (lambda (coins amount)
@@ -59,5 +60,5 @@
 ;(define (even-partitions))
 
 
-;(define (knapsack))
+;(define (knapsack)) 
   

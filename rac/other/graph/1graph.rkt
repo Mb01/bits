@@ -24,8 +24,6 @@
 
 (set! g (spanning-tree g))
 
-
-
 (when #t
   (define outfile (open-output-file "graph" #:exists 'replace))
   (display (graphviz g  #:colors (coloring g 3)))

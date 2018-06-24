@@ -2,7 +2,6 @@
 
 ;; problem constraints:
 ;; choose items from
-;; 
 ;; http://www.rosettacode.org/wiki/Knapsack_problem/0-1#Racket
 (define items '((map 9 150) (compass 13 35) (water 153 200) (sandwich 50 160)
       (glucose 15 60) (tin 68 45)(banana 27 60) (apple 39 40)
@@ -48,7 +47,7 @@
   ;; call the following with an
   (define empty-accumulator '())
   ;; and the items defined above
-
+  
   (define (knapsack-brute included items)
     (cond
       ((null? items) included)
@@ -62,7 +61,7 @@
   (display-solution (reverse (knapsack-brute empty-accumulator items))))
 
 ; uncomment to run, this took around five seconds on my computer
-(show-brute)
+;(show-brute)
 
 ;; now we'll see how much memoizing solutions improves 
 ;; this is definately much faster
@@ -88,8 +87,6 @@
              (knapsack max-weight items)
              max-weight)))))))
   
-  (display-solution (knapsack max-weight items))) 
+  (display-solution (knapsack max-weight items)))
 
 (show-memoized)
-
-

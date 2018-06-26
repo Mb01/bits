@@ -18,6 +18,14 @@
 (provide factor)
 
 (provide two-combs)
+(provide memoize)
+
+(define (memoize func)
+  (let ([result-ht (make-hash)])
+    (lambda args ; this is the rest-id pattern
+      (when (not (hash-has-key? result-ht args))
+        (hash-set! result-ht args (apply func args)))
+      (hash-ref result-ht args))))
 
 (define (prime? n)
   (define (inner n i); = has-a-factor?
@@ -212,6 +220,15 @@
         (reverse
          (reverse-before
           (swapped original-li successor-pos pivot-pos) pivot-pos)))))))
+
+(define (slice li from to)
+  (letrec
+      (; gets function returning at index from provided list 
+       [make-index-mapping 
+        (lambda (li)
+          (lambda (i)
+            (list-ref li i)))])
+    (map (make-index-mapping li) (range from to))))
 
 ; **** DO NOT USE  ***
 ; why write general solution

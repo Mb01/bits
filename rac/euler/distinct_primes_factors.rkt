@@ -14,8 +14,8 @@
 #lang racket
 
 (require "utils.rkt")
-
-; factor has four unique factors
+;; definately a candidate for memoize
+;; factor has four unique factors
 (define (factor-len4 n)
   (let ([factor-n (factor n)]) 
      (= 4 (length (remove-duplicates factor-n)))))

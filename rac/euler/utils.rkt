@@ -12,6 +12,8 @@
 (provide integer->list)
 (provide list->integer)
 
+(provide number-cat)
+
 (provide qsort)
 (provide next-permutation)
 (provide prev-permutation)
@@ -92,8 +94,6 @@
     (if (= n 0)
         acc
         (number->list (/ (- n rem) 10) (cons rem acc)))))
-
-
 
 ;; to be depracated
 (define (list->number li)

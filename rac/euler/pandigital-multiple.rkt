@@ -56,3 +56,12 @@ the 4 product ends in 0,2,4,6,8
 
 
 
+(define possible (filter (λ (x) x) (map pd? (range 10000))));
+;; that's not so many
+
+(define (make-range x n)
+  (map (λ (y) (* n y)) (range 1 x)))
+
+(define candidates (map number-cat (map (λ (x) (apply make-range x)) possible)))
+
+(car (sort candidates >))

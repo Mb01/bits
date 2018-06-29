@@ -104,6 +104,8 @@
                 (else (inner (cdr li) (string-append string-acc (number->string (car li)))))))])
     (inner li "")))
 
+(define (number-cat li)
+  (string->number (apply string-append (map number->string li))))
 
 (define (qsort li)
   (if (< (length li) 2)

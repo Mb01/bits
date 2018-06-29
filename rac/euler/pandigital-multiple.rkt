@@ -52,7 +52,7 @@ the 4 product ends in 0,2,4,6,8
     ((check-range 9) (list 9 n))
     (else #f)))
 
-;; finishing the answer redacted
+;; finishing the answer redacted to prevent casual cheating
 
 
 

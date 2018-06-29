@@ -123,7 +123,7 @@
     ((= n 0) '())
     (else (cons #\space (repeat (sub1 n))))))
 
-(let ([tree (make-tree 5 3)])
+(let ([tree (make-tree 2 3)])
   (for
       ([i (reverse tree)]
        [j (range 0 (length tree))])

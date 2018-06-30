@@ -216,7 +216,7 @@
             (list-ref li i)))])
     (map (make-index-mapping li) (range from to))))
 
-;; why write general solution
+;; why write general solution?
 (define (two-combs li)
   (filter
    identity

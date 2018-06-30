@@ -235,16 +235,9 @@
 ; **** DO NOT USE  ***
 ; why write general solution
 (define (two-combs li)
-  (letrec (
-           [inner
-           (lambda (x li)
-             (if (null? li)
-                 (list)
-                 (cons
-                  (list x (car li))
-                  (inner x (cdr li)))))])
-    (if (null? li)
-        (list)
-        (append
-         (inner (car li) (cdr li))
-         (two-combs (cdr li))))))
+  (filter
+   identity
+   (append-map (λ (x)
+                 (map (λ (y)
+                        (if (= x y) #f
+                            (list x y))) li)) li)))

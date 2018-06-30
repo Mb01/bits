@@ -232,7 +232,6 @@
             (list-ref li i)))])
     (map (make-index-mapping li) (range from to))))
 
-; **** DO NOT USE  ***
 ; why write general solution
 (define (two-combs li)
   (filter
@@ -241,3 +240,5 @@
                  (map (λ (y)
                         (if (= x y) #f
                             (list x y))) li)) li)))
+
+

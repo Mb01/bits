@@ -41,7 +41,6 @@
   ; is 2 or neither divisible by 2 nor divisible by an odd number 
   (or (= n 2) (nor (inner n 3) (= (modulo n 2) 0))))
 
-
 ; this seems reasonably fast
 (define (factor n)
   ;(display n) (newline) (newline)
@@ -64,31 +63,16 @@
            )
     (append (twos n) (inner n-after-twos 3))))
 
-;(display 1) (display (factor 1)) (newline)
-;(display 2) (display (factor 2)) (newline)
-;(display 12) (display (factor 12)) (newline)
-;(display 13) (display (factor 13)) (newline)
-;(display 16) (display (factor 16)) (newline)
-;(display 15) (display (factor 15)) (newline)
-;(display 24) (display (factor 24)) (newline)
-;(display 32) (display (factor 32)) (newline)
-;(display 12654654) (display (factor 12654654)) (newline)
-;(display 77777773) (display (factor 77777773)) (newline)
-
-
 (define (integer->list n)
   (number->list n '()))
 
 (define (list->integer li)
   (list->number li))
 
-
-
-
 ;; external use depracated
-; (number->list 654 '()) -> '(6 5 4) ; Ineed to refactor this really
-; no need to expose acc
-; TODO make it return correct value for exactly 0
+;; (number->list 654 '()) -> '(6 5 4) ; Ineed to refactor this really
+;; no need to expose acc
+;; TODO make it return correct value for exactly 0
 (define (number->list n acc)
   (let ([rem  (remainder n 10)])
     (if (= n 0)
@@ -148,8 +132,8 @@
 
 
 
-; lexicograph/find next larger permutation of number
-; integer -> integer
+;; lexicograph/find next larger permutation of number
+;; integer -> integer
 (define (next-permutation n)
   (call/cc
    (lambda (return)
@@ -181,17 +165,17 @@
           (swapped original-li successor-pos pivot-pos) pivot-pos)))))))
 
 
-; 0123 ->  9876 (must keep 0 otherwise big trouble with leading 9s 0s)
-; e.g. 908 -> 91 -> 8
-; probably needs to store as string until permuted
-; **** FIXME ****
-;(define (inverse-digits n)
-;  (list->integer
-;   (map
-;    (lambda (x) (- 9 x))
-;    (integer->list n))))
+;; 0123 ->  9876 (must keep 0 otherwise big trouble with leading 9s 0s)
+;; e.g. 908 -> 91 -> 8
+;; probably needs to store as string until permuted
+;; **** FIXME ****
+;;(define (inverse-digits n)
+;;  (list->integer
+;;   (map
+;;    (lambda (x) (- 9 x))
+;;    (integer->list n))))
 
-; invert the digits
+;; invert the digits
 (define (prev-permutation n)
   (call/cc
    (lambda (return)
@@ -232,7 +216,7 @@
             (list-ref li i)))])
     (map (make-index-mapping li) (range from to))))
 
-; why write general solution
+;; why write general solution
 (define (two-combs li)
   (filter
    identity
@@ -241,4 +225,14 @@
                         (if (= x y) #f
                             (list x y))) li)) li)))
 
+;; general solutions, but not optimized
+(define (all-combs li)
+  (cond
+    [(null? li) '(())]
+    [else
+     (append
+      (map (curry cons (car li)) (all-combs (cdr li)))
+      (all-combs (cdr li)))]))
 
+(define (n-combs li n)
+  (filter (λ (x) (= (length x) n)) (all-combs li)))

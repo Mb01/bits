@@ -236,3 +236,16 @@
 
 (define (n-combs li n)
   (filter (λ (x) (= (length x) n)) (all-combs li)))
+
+(define (listify li) ; wraps every element in a list
+  (map (curryr cons '()) li))
+
+(define (consx x li)
+  (map (curry cons x) li))
+
+(define (permutations li)
+  (cond
+    [(null? li) (list '())]
+    [else (append-map (λ (x) (consx x (permutations (remove x li)))) li)]))
+
+

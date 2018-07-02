@@ -47,7 +47,7 @@
       ; keep looking
       (else (inner n (+ i 2)))))
   ; is 2 or neither divisible by 2 nor divisible by an odd number 
-  (or (= n 2) (nor (inner n 3) (= (modulo n 2) 0))))
+  (and (not (= n 1)) (or (= n 2) (nor (inner n 3) (= (modulo n 2) 0)))))
 
 ; this seems reasonably fast
 (define (factor n); -> listof? n

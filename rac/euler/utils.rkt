@@ -3,33 +3,41 @@
 
 ; functions which have may well be used across multiple solutions
 
-(provide prime?)
+(provide memoize
+         prime?
+         factor
+         
+         ; deprecated
+         ;number->list;; TODO remove these from code
+         ;list->number;; TODO remove these from code
+         
+         integer->list
+         list->integer
+         
+         number-cat
+         
+         qsort
+         next-permutation
+         prev-permutation
+         
+         
+         two-combs   ; optimized for particular case
+         permutations
+         permutations-n
+         combinations
+         combinations-n
+         inversion?
+         consx
+         )
 
-; deprecated
-(provide number->list)
-(provide list->number)
-
-(provide integer->list)
-(provide list->integer)
-
-(provide number-cat)
-
-(provide qsort)
-(provide next-permutation)
-(provide prev-permutation)
-(provide factor)
-
-(provide two-combs)
-(provide memoize)
-
-(define (memoize func)
+(define (memoize func) ; ->memoized function
   (let ([result-ht (make-hash)])
     (lambda args ; this is the rest-id pattern
       (when (not (hash-has-key? result-ht args))
         (hash-set! result-ht args (apply func args)))
       (hash-ref result-ht args))))
 
-(define (prime? n)
+(define (prime? n) ; ->boolean
   (define (inner n i); = has-a-factor?
     (cond
       ; end search negative when i * i is bigger than n
@@ -42,7 +50,7 @@
   (or (= n 2) (nor (inner n 3) (= (modulo n 2) 0))))
 
 ; this seems reasonably fast
-(define (factor n)
+(define (factor n); -> listof? n
   ;(display n) (newline) (newline)
   (letrec (
            [inner ; this misses twos
@@ -91,7 +99,7 @@
 (define (number-cat li)
   (string->number (apply string-append (map number->string li))))
 
-(define (qsort li)
+(define (qsort li) ;; algorithm doesn't actually fit immutable data
   (if (< (length li) 2)
       li
       (append
@@ -112,7 +120,8 @@
 (define (conscar li1 li2) ; helper function
   (cons (car li1) li2))
 
-
+;; TODO: improve
+;; this can't possibly be the cleanest way to do this
 (define (swapped li left-pos right-pos) ; helper function
   (append (take li left-pos); before left
           (list (list-ref li right-pos));left swapped with right
@@ -130,9 +139,7 @@
                   (inner (cdr li) (sub1 pos) (conscar li acc))))])
     (inner li pos empty)))
 
-
-
-;; lexicograph/find next larger permutation of number
+;; lexicograph/find next larger permutation of number (take care of leading 0's for the following two
 ;; integer -> integer
 (define (next-permutation n)
   (call/cc
@@ -164,18 +171,14 @@
          (reverse-before
           (swapped original-li successor-pos pivot-pos) pivot-pos)))))))
 
+;; Problem:
+;; 0123  (must keep 0 otherwise big trouble with leading 0s)
 
-;; 0123 ->  9876 (must keep 0 otherwise big trouble with leading 9s 0s)
-;; e.g. 908 -> 91 -> 8
 ;; probably needs to store as string until permuted
-;; **** FIXME ****
-;;(define (inverse-digits n)
-;;  (list->integer
-;;   (map
-;;    (lambda (x) (- 9 x))
-;;    (integer->list n))))
+;; **** TODO ****
+;;(define (inverse-digits n)?
 
-;; invert the digits
+;; 
 (define (prev-permutation n)
   (call/cc
    (lambda (return)
@@ -216,36 +219,60 @@
             (list-ref li i)))])
     (map (make-index-mapping li) (range from to))))
 
-;; why write general solution?
-(define (two-combs li)
+;; this should be a hint for the general solution
+;; use general solution
+(define (two-combs li) ;;egads this isn't even correct, this is trunc-perms
   (filter
    identity
    (append-map (λ (x)
                  (map (λ (y)
-                        (if (= x y) #f
+                        (if (>= x y) #f
                             (list x y))) li)) li)))
-
-;; general solutions, but not optimized
-(define (all-combs li)
-  (cond
-    [(null? li) '(())]
-    [else
-     (append
-      (map (curry cons (car li)) (all-combs (cdr li)))
-      (all-combs (cdr li)))]))
-
-(define (n-combs li n)
-  (filter (λ (x) (= (length x) n)) (all-combs li)))
-
-(define (listify li) ; wraps every element in a list
-  (map (curryr cons '()) li))
 
 (define (consx x li)
   (map (curry cons x) li))
 
-(define (permutations li)
+(define (listify li)
+  (map (curryr cons '()) li))
+
+(define (permutations-n li n) ;; returns all n-length perms
   (cond
-    [(null? li) (list '())]
-    [else (append-map (λ (x) (consx x (permutations (remove x li)))) li)]))
+    [(= n 0) '(())]
+    [(= n 1) (listify li)]
+    [else
+     (filter identity
+     (append-map (λ (x)
+                   (map
+                    (λ (y)
+                      (if (member x y)
+                          #f
+                          (cons x y)))
+                    (permutations-n li (sub1 n))))
+                 li))]))
 
+;; I implemented my own for purity of solution.
+(define (combinations li)
+  (if (null? li) '(())
+      (let ([subs (combinations (cdr li))])
+        (append (consx (car li) subs) subs))))
 
+(define (combinations-n li n)
+  (cond
+    [(> n (length li)) '()] ;; in this case append will do away with this list
+    [(or (zero? n) (null? li)) '(())] ;; while this will be mapped
+    [else (append
+           (consx (car li) (combinations-n (cdr li) (sub1 n)))
+           (combinations-n (cdr li) n))]))
+
+;; I implemented my own for purity of solution.
+(define (permutations li)
+  (if (null? li) '(())
+      (append-map (λ (x) (consx x (permutations (remove x li)))) li)))
+
+;; true if not an ascending sequence
+;; probably cond is better for readability and  tail recursion
+(define (inversion? li)
+  (define (helper li)
+    (if (null? (cdr li)) #f
+         (or (> (car li) (cadr li)) (helper (cdr li)))))
+  (and (not (null? li)) (helper li)))

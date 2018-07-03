@@ -4,7 +4,9 @@
 ; functions which have may well be used across multiple solutions
 
 (provide memoize
+         memoized-prime?
          prime?
+         primes-to
          factor
          
          ; deprecated
@@ -48,6 +50,14 @@
       (else (inner n (+ i 2)))))
   ; is 2 or neither divisible by 2 nor divisible by an odd number 
   (and (not (= n 1)) (or (= n 2) (nor (inner n 3) (= (modulo n 2) 0)))))
+
+(define memoized-prime?
+  (memoize
+   (λ (n)
+     (prime? n))))
+
+(define (primes-to n)
+  (filter prime? (range 2 n)))
 
 ; this seems reasonably fast
 (define (factor n); -> listof? n

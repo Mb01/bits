@@ -22,6 +22,7 @@
          next-permutation
          prev-permutation
          
+         sort-number
          
          two-combs   ; optimized for particular case
          permutations
@@ -30,6 +31,8 @@
          combinations-n
          inversion?
          consx
+         polygonal-number
+         polygonal-n
          )
 
 (define (memoize func) ; ->memoized function
@@ -220,6 +223,9 @@
          (reverse-before
           (swapped original-li successor-pos pivot-pos) pivot-pos)))))))
 
+(define (sort-number n)
+  (list->string (sort (string->list (number->string n)) char<?)))
+
 (define (slice li from to)
   (letrec
       (; gets function returning at index from provided list 
@@ -286,3 +292,15 @@
     (if (null? (cdr li)) #f
          (or (> (car li) (cadr li)) (helper (cdr li)))))
   (and (not (null? li)) (helper li)))
+
+(define (polygonal-number s n)
+  (/
+   (* n (- (+ n 4) s))
+
+   (if (zero? (modulo s 2)) 1 2))) ;; thats equivalent to  n * (n + 4 - s) / (if mod s 2 = 0 1 else 2)
+
+(define (polygonal-n s n)
+  (let ([n (add1 n)])
+    (map polygonal-number (make-list (- n 1) s) (range 1 n))))
+
+

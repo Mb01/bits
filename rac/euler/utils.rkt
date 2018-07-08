@@ -39,6 +39,7 @@
   (let ([result-ht (make-hash)])
     (lambda args ; this is the rest-id pattern
       (when (not (hash-has-key? result-ht args))
+        ;;(displayln (list "miss" args)) 
         (hash-set! result-ht args (apply func args)))
       (hash-ref result-ht args))))
 
@@ -223,6 +224,7 @@
          (reverse-before
           (swapped original-li successor-pos pivot-pos) pivot-pos)))))))
 
+;; an example of "stringly typed"
 (define (sort-number n)
   (list->string (sort (string->list (number->string n)) char<?)))
 
@@ -293,13 +295,11 @@
          (or (> (car li) (cadr li)) (helper (cdr li)))))
   (and (not (null? li)) (helper li)))
 
+
 (define (polygonal-number s n)
-  (/
-   (* n (- (+ n 4) s))
+  (+ n (* (- s 2) n (- n 1) 1/2))) ;= n + (s-2)n(n -1)/2
 
-   (if (zero? (modulo s 2)) 1 2))) ;; thats equivalent to  n * (n + 4 - s) / (if mod s 2 = 0 1 else 2)
-
-(define (polygonal-n s n)
+(define (polygonal-n s n); -> n-length list of s-gonal numbers
   (let ([n (add1 n)])
     (map polygonal-number (make-list (- n 1) s) (range 1 n))))
 

@@ -8,6 +8,7 @@
          prime?
          primes-to
          factor
+         factorial
          
          ; deprecated
          ;number->list;; TODO remove these from code
@@ -17,6 +18,7 @@
          list->integer
          
          number-cat
+         sum-digits
          
          qsort
          next-permutation
@@ -31,6 +33,7 @@
          combinations-n
          inversion?
          consx
+         
          polygonal-number
          polygonal-n
          gen-pent-n
@@ -85,6 +88,13 @@
            [n-after-twos (/ n (apply * (twos n)))]
            )
     (append (twos n) (inner n-after-twos 3))))
+
+(define factorial
+  (memoize ;; sometimes called many times
+   (λ (n)
+     (cond
+       [(= n 0) 1]
+       [else (* n (factorial (sub1 n)))]))))
 
 (define (integer->list n)
   (number->list n '()))
@@ -228,6 +238,9 @@
 ;; an example of "stringly typed"
 (define (sort-number n)
   (list->string (sort (string->list (number->string n)) char<?)))
+
+(define (sum-digits n)
+  (apply + (integer->list n)))
 
 (define (slice li from to)
   (letrec

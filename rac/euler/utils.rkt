@@ -33,6 +33,7 @@
          consx
          polygonal-number
          polygonal-n
+         gen-pent-n
          )
 
 (define (memoize func) ; ->memoized function
@@ -303,4 +304,20 @@
   (let ([n (add1 n)])
     (map polygonal-number (make-list (- n 1) s) (range 1 n))))
 
+
+
+;; generate a list of pentogonal numbers, I'm leaving off zero
+(define (gen-pent-n n)
+
+  (define (formula n) 
+    (* n (- (* n 3) 1) 1/2)) ;= n(3n - 1)/2
+
+  (define (recurse on acc)
+    (cond
+      [(= on n) (reverse acc)]
+      ;; remember that we're going to reverse
+      [(recurse
+        (add1 on)
+        (cons (formula (- on)) (cons (formula on) acc)))]))
+  (recurse 1 '()))
 

@@ -4,8 +4,8 @@
 ; functions which have may well be used across multiple solutions
 
 (provide memoize
-         memoized-prime?
          prime?
+         memoized-prime?
          primes-to
          factor
          factorial
@@ -19,12 +19,15 @@
          
          number-cat
          sum-digits
-         
+         pandigital19?
+         sort-number
          qsort
+
          next-permutation
          prev-permutation
-         
-         sort-number
+         permutations?
+
+         slice
          
          two-combs   ; optimized for particular case
          permutations
@@ -112,7 +115,7 @@
         acc
         (number->list (/ (- n rem) 10) (cons rem acc)))))
 
-;; to be depracated
+;; deprecated
 (define (list->number li)
   (letrec ([inner
             (lambda (li string-acc)
@@ -235,12 +238,20 @@
          (reverse-before
           (swapped original-li successor-pos pivot-pos) pivot-pos)))))))
 
-;; an example of "stringly typed"
+(define (permutations? n1 n2)
+  (= (sort-number n1) (sort-number n2)))
+
+;; some parts are going to be broken by this because
+;; they previosly relied on this returning a string
+;; but now it does not
 (define (sort-number n)
-  (list->string (sort (string->list (number->string n)) char<?)))
+  (list->integer (qsort (integer->list n))))
 
 (define (sum-digits n)
   (apply + (integer->list n)))
+
+(define (pandigital19? n)
+  (= (sort-number n) 123456789))
 
 (define (slice li from to)
   (letrec

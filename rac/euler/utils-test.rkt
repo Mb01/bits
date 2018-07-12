@@ -14,7 +14,13 @@
        [else (+ (fibo (- n 1)) (fibo (- n 2)))]))))
 
 (check-true (let-values ([(result cpu-time real-time garbage-time) (time-apply fibo '(10000))])
-                         (< cpu-time 1000)) "didn't expect memoized fibonacci to take that long")
+              (< cpu-time 1000)) "didn't expect memoized fibonacci to take that long")
+
+(check-true (let-values ([(result cpu-time real-time garbage-time) (time-apply fibo '(1000))])
+              (< cpu-time 1000)) "fibonacci test took some time")
+
+(check-true (let-values ([(result cpu-time real-time garbage-time) (time-apply fibo '(100))])
+                         (< cpu-time 1000)) "fibonacci wasn't blazing fast")
 
 ;; prime
 (check-true (andmap prime? '(5 7 11 13 17 19 23 29 31 37 41 43 47 53 59 61 67 71 73 79 83 89 97 101 103 107 109 113 127 131 137 139 149 151 157 163 167 173 179 181 191 193 197 199)))
@@ -44,6 +50,30 @@
 
 ;; prev-permutation
 (check-equal? (prev-permutation 132) 123)
+
+;; permutations?
+(check-true (permutations? 123 321))
+(check-false (permutations? 1234 1235))
+
+;; sort number
+(check-equal? (sort-number 321) 123)
+;(check-equal? (sort-number 0 ) 0) ;; bug in integer->list
+
+;; sum-digits
+(check-equal? (sum-digits 123) 6)
+;(check-equal? (sum-digits 0) 0) ;; bug in integer->list
+
+;; pandigital19? 
+(check-true (pandigital19? 123456789))
+(check-false (pandigital19? 123456788))
+
+;; slice ;; not provided externally yet
+(check-equal? (slice '(1 2 3) 0 0) '())
+(check-equal? (slice '(1 2 3) 0 1) '(1))
+(check-equal? (slice '(1 2 3) 0 2) '(1 2))
+(check-equal? (slice '(1 2 3) 0 3) '(1 2 3))
+(check-exn exn:fail:contract? (thunk (slice '(1 2 3) 0 4)))
+(check-not-exn (thunk (slice '() 0 0)))
 
 ;; two-combs
 (check-equal? (two-combs '(1 2)) '((1 2)))

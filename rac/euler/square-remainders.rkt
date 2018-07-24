@@ -27,6 +27,7 @@
 ;; thought process
 
 ;; I used
+
 ;; (map (λ (x) (map (curry r x) (range 30))) (range 1 10)) ->
 
 ;; '((0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0)

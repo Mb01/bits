@@ -46,5 +46,5 @@
 (define empty-count 0)
 (define num-center-squares 1)
 
-;; redacted
+(search first-odd empty-count num-center-squares)
 

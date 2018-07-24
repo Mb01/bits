@@ -32,4 +32,8 @@
 (define (num>den n)
   (> (count-digits (numerator n)) (count-digits (denominator n))))
 
-;; redacted answer
+(define raw-data (map solve (range 2 1002)))
+
+(define answer (length (filter-map num>den raw-data)))
+
+answer

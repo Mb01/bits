@@ -134,7 +134,7 @@
 (check-equal? (inversion? '(1 2 3)) #f)
 (check-equal? (inversion? '(1 2 3 13)) #f)
 
-(check-equal? (inversion? '(2 1)) #t)
+(check-equal? (inversion? '(2 1)) #f)
 (check-equal? (inversion? '(1 3 2)) #t)
 (check-equal? (inversion? '(1 2 1)) #t)
 (check-equal? (inversion? '(1 1 1 2 1)) #t)

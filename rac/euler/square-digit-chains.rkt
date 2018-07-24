@@ -30,10 +30,6 @@ How many starting numbers below ten million will arrive at 89?
          [(= 89 n) #t]
          [else (square-digit-chain (sum-square-digits n))]))))
 
-;(length (map square-digit-chain (range 1 10000000)))
-   
-   
-
 (define (search n acc)
   (cond
     [(= n 10000000) acc]

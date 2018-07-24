@@ -48,4 +48,7 @@ Now to search for a solution
       (search (cdr primes) (cons (car primes) acc))
       (search (cdr primes) acc))]))
 
-;; redacted
+(define primes<9000 (primes-to 9000))
+
+(filter identity (search primes<9000 '()))
+

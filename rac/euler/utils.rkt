@@ -312,14 +312,19 @@
   (if (null? li) '(())
       (append-map (λ (x) (consx x (permutations (remove x li)))) li)))
 
-;; true if not an ascending sequence
-;; probably cond is better for readability and  tail recursion
+;; I changed the behavior of this function by allowing
+;; descending sequences to be "not inversions"
+;; so I anticipate some breaking changes
+;; if needed, the "ascending?" function should be made available
+;; for those cases
 (define (inversion? li)
-  (define (helper li)
-    (if (null? (cdr li)) #f
-         (or (> (car li) (cadr li)) (helper (cdr li)))))
-  (and (not (null? li)) (helper li)))
-
+  (define (ascending? li)
+    (cond
+      [(null? (cdr li)) #t]
+      [else (and (<= (car li) (cadr li)) (ascending? (cdr li)))]))
+  (define (descending? li)
+    (ascending? (reverse li)))
+  (nor (null? li) (ascending? li) (descending? li)))
 
 (define (polygonal-number s n)
   (+ n (* (- s 2) n (- n 1) 1/2))) ;= n + (s-2)n(n -1)/2
@@ -327,8 +332,6 @@
 (define (polygonal-n s n); -> n-length list of s-gonal numbers
   (let ([n (add1 n)])
     (map polygonal-number (make-list (- n 1) s) (range 1 n))))
-
-
 
 ;; generate a list of pentogonal numbers, I'm leaving off zero
 (define (gen-pent-n n)

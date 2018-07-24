@@ -28,7 +28,6 @@
 (define primes-li (filter prime?  (range 2 upto)))
 (define primes-set (list->seteq primes-li))
 
-
 (define rotate-left
   (lambda (li)
     (letrec (
@@ -37,7 +36,6 @@
                 (cond ((null? li) (list carli))
                       (else (cons (car li) (inner (cdr li) carli)))))])
       (inner (cdr li) (car li)))))
-
 
 (define (circs n)
 

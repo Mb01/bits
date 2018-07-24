@@ -37,5 +37,3 @@
   (system "dot -Tps graph -o graph.ps")
   ; read with postscript reader
   (system "xreader graph.ps"))
-
-

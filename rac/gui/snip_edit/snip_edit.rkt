@@ -125,6 +125,7 @@
                          "ecltoe"
                          editor-copy-line-other-editor
                          "left")
+
 (add-function-to-keymap editor-keymap
                         "ecfoe"
                         editor-copy-from-other-editor

@@ -1,6 +1,5 @@
 #!/usr/bin/env python
 
-from itertools import starmap
 
 class weighted_edge(object):
     def __init__(self, destination, weight):
@@ -24,6 +23,9 @@ class bidirectional_weight_graph(object):
 
 
 bwg = bidirectional_weight_graph()
+# add edges from n to n+1 with weight 1 from 1 to 5
 edges = zip(range(1, 5), range(2, 6), (1, ) * 4)
 for e in edges:
     bwg.add_edge(*e)
+# add a direct connection from 2 to 5 that should be be part of a min sp tree
+bwg.add_edge(2, 5, 0)

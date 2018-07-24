@@ -3,32 +3,19 @@
 #include <limits.h>
 /* Find a knight's tour around a chessboard, visit every square exactly once */
 /* a complete tour returns to the same square, but this is not what we are looking for today */
-/* This is a rehash of a version I wrote 4/5 years ago */
+
+/* Trying better algorithm  */
 
 
 /* simple printer funtion for board aka an array */
-void prar(int ** ar, int n){
-  int i,j;
-  for(i = 0; i < n; i++){
-    for(j = 0; j < n; j++){
-      if(j != 0) putchar(' '); /* no space at start of line  */
-      if(ar[j][i] < 10) putchar(' '); /* compensate for single digits */
-      printf("%d", ar[j][i]); /* inversion means now x,y in sensible order */
-      if(j == n - 1) putchar('\n');
-    }
-  }
-}
+void prar(int ** ar, int n);
 
 unsigned long long CALL_COUNT = 0;
 
 /* use backtracking to find solutions */
 void _solve(int x, int y, int** board, int n){
   ++CALL_COUNT;
-  if(CALL_COUNT % 100000000 == 0){
-    printf("\nnofind: aprox %llu * hundred million tries\n", CALL_COUNT / 100000000);
-    prar(board, n);
-    ;
-  }
+
   int i; /* iterator */
   int newx;
   int newy; /* new position on board to call function */
@@ -110,4 +97,16 @@ int main(int argc, char** argv){
     n = atoi(argv[1]);
   }
   solve(n);
+}
+
+void prar(int ** ar, int n){
+  int i,j;
+  for(i = 0; i < n; i++){
+    for(j = 0; j < n; j++){
+      if(j != 0) putchar(' '); /* no space at start of line  */
+      if(ar[j][i] < 10) putchar(' '); /* compensate for single digits */
+      printf("%d", ar[j][i]); /* inversion means now x,y in sensible order */
+      if(j == n - 1) putchar('\n');
+    }
+  }
 }

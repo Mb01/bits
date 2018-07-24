@@ -72,7 +72,7 @@
      (displayln (apply string-append (car pt)))
      (display-triangle (cdr pt))]))
 
-(display-triangle (my-pretty-triangle 10))
+(display-triangle (my-pretty-triangle 12))
 ;; ->
 ;;                     1
 ;;                   1   1

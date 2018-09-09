@@ -10,56 +10,63 @@
 (define (squared x)
   (* x x))
 
+;; Forgive me for not reading up on the subject before attempting the problem.
+
 ;; let's walk through the example
-;; sqrt(23) = (sq23 + 0) / 1 =
+;;     sqrt(23) = (sq23 + 0) / 1 =
 
-;; --steps--
+;; ** While positive, move ones out of the fraction 0 +  5/4 -> 1 + 1/4 **
+;;     4 + (sq23 - 4) / 1  = 
 
-;; ** while positive "draw out" ones e.g. 5/4 = 1 + 1/4**
-;; 4 + (sq23 - 4) / 1  = 4 + ...
 ;; ** then "continued-fractionify" **
-;; 1 / (1 / (sq23 - 4)) 
-;; state is kept values and 1 / (sq23 - 4)
-;; ** rationalize denominator by multiplying conjugate **
-;; 1 / (sq23 - 4) * (sq23 + 4) / (sq23 + 4) => (sq23 + 4) / 7
+;;     4 + 1 / (1 / (sq23 - 4)) 
+;;     (the 4 on the left is part of the answer)
+;;     1 / (sq23 - 4)
+
+;; ** rationalize the denominator by multiplying with conjugate **
+;;     1 / (sq23 - 4) * (sq23 + 4) / (sq23 + 4) => (sq23 + 4) / 7
+
 ;; ** repeat **
 
-;; --- let's break down that last step ---
+;; --- this last step is  ---
+;; that's:
 ;; a / (sqrt(b) + c) =
 ;; a (sqrt(b) - c) / (b - c^2)
 
+;; ====== BRIEF EXPLANATION ======
 
-;; insight, keep the multiplier "out front"
+;; I haven't proven it, but empirically, this simplifies to:
 
-;; let's try to write that out and
-;; try to skip intermediate steps
-;; with unsolved algebra to manipulate
+;; (sqrt(root-of) + add) / den -> (sqrt(root-of) - add') / den'
 
-;; how many ones can we remove from the fraction
-;; while the fraction is still positive
+;; where
+;; add' = add - ones * den
+;; den' = (root-of - add'^2) / den
+;; ones = factor-out-ones(root-of, add, den)
+
+;; How many ones can we remove from the fraction
+;; while the fraction is still positive?
 (define (factor-out-ones root-of addend denominator)
   (cond
     [(> (squared addend) root-of) -1]
     [else (add1 (factor-out-ones root-of (- addend denominator) denominator))]))
 
-;(invert-rationalize-prototype2 23 -4 1)
-;(invert-rationalize-prototype2 23 -3 7)
-
 (define (solve root-of)
-  ;; cycle-set contains previous arguments
+  ;; record arguments to detect cycle
   (define cycle-set (mutable-set))
   ;; state in the form:  ;; (sq(root-of) + add) / den
   ;; acc has "left-side addends" already found
   (define (solve add den acc)
     (cond
-      ;; already seen = cycle -> finished
+      ;; already seen arguments represents cycle -> finish
       [(set-member? cycle-set (list add den)) (reverse acc)]
       [else
+       ;; record arguments
        (set-add! cycle-set (list add den))
        (let* (;; factor out ones
               [ones (factor-out-ones root-of add den)]
               ;; update add to reflect this
-              [add (- add ( * ones den))]
+              [add (- add (* ones den))]
               ;; invert -> rationalize -> cancel multiplier
               [new-den (/ (- root-of (squared add)) den)]
               [new-add (- add)])
@@ -77,5 +84,5 @@
 
 (define raw-answer (set-map no-squares solve))
 
-;; remember we have that first number that is not part of the period
+;; since the first number is not part of the answer, odd? -> even?
 (length (filter-map (lambda (x) (even? (length x))) raw-answer))

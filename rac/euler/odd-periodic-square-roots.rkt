@@ -35,7 +35,7 @@
 
 ;; ====== BRIEF EXPLANATION ======
 
-;; I haven't proven it, but empirically, this simplifies to:
+;; I haven't proven it, but I guess this always simplifies to:
 
 ;; (sqrt(root-of) + add) / den -> (sqrt(root-of) - add') / den'
 
@@ -46,6 +46,7 @@
 
 ;; How many ones can we remove from the fraction
 ;; while the fraction is still positive?
+;; todo: naming / proper implementation.
 (define (factor-out-ones root-of addend denominator)
   (cond
     [(> (squared addend) root-of) -1]
@@ -86,3 +87,5 @@
 
 ;; since the first number is not part of the answer, odd? -> even?
 (length (filter-map (lambda (x) (even? (length x))) raw-answer))
+
+;; the current definition style precludes solving for (1 + sqr(5))/ 2 etc. which is not satisfactory

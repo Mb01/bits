@@ -26,3 +26,13 @@
       [else (cont remainder (- d remainder))])))
     
 (cont n d)
+
+;; (This is a more traditional form)
+(define (cont2 n d)
+  (let ([quotient (quotient n d)]
+        [remainder (remainder n d)])
+    (cond
+      [(zero? remainder) (list quotient)]
+      [else (cons quotient (cont2 d remainder))])))
+    
+(cont2 n d)

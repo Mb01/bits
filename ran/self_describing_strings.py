@@ -12,10 +12,10 @@ number_names = {
 
 def generate_self_describing_strings():
     # We will compare the value of the string with length of the string.
-    # One might debate which of these words includes spaces.
+    # One might debate which of these words is meant to include spaces.
     suffix_list = ["chars", "letters","glyphs","elements","characters", "letters"]
 
-    suffix_list = suffix_list + [x + " exist" for x in suffix_list] + [x + " are in this string " for x in suffix_list]
+    suffix_list = suffix_list + [x + " exist" for x in suffix_list] + [x + " are in this string" for x in suffix_list]
 
     # We want to be able to look up a suffix with given length.
     suffixes = {len(suffix): suffix for suffix in suffix_list}
